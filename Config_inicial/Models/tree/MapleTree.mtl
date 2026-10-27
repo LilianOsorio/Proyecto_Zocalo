@@ -1,0 +1,8 @@
+newmtl None_maple_leaf.png.001
+map_Kd maple_leaf.png
+
+newmtl None.001
+map_Kd maple_bark.png
+
+newmtl None
+map_Kd maple_bark.png

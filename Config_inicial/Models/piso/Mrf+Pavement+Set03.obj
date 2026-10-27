@@ -1,0 +1,105 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 26.10.2022 07:59:21
+
+mtllib Mrf Pavement Set03.mtl
+
+#
+# object Mrf_Plane_Pavement_Set03_LIGHT_GRAY
+#
+
+v  -1157.9641 0.0000 250.0000
+v  -657.9642 0.0000 250.0000
+v  -657.9642 0.0000 -250.0000
+v  -1157.9641 0.0000 -250.0000
+# 4 vertices
+
+vn 0.0000 1.0000 -0.0000
+# 1 vertex normals
+
+vt -0.6364 -0.6364 0.5000
+vt 1.6364 -0.6364 0.5000
+vt 1.6364 1.6364 0.5000
+vt -0.6364 1.6364 0.5000
+# 4 texture coords
+
+g Mrf_Plane_Pavement_Set03_LIGHT_GRAY
+usemtl wire_008061138
+s 1
+f 1/1/1 2/2/1 3/3/1 4/4/1 
+# 1 polygons
+
+#
+# object Mrf_Plane_Pavement_Set03_DARK_GRAY
+#
+
+v  50.0000 0.0000 250.0000
+v  550.0000 0.0000 250.0000
+v  550.0000 0.0000 -250.0000
+v  50.0000 0.0000 -250.0000
+# 4 vertices
+
+vn 0.0000 1.0000 -0.0000
+# 1 vertex normals
+
+vt -0.6364 -0.6364 0.5000
+vt 1.6364 -0.6364 0.5000
+vt 1.6364 1.6364 0.5000
+vt -0.6364 1.6364 0.5000
+# 4 texture coords
+
+g Mrf_Plane_Pavement_Set03_DARK_GRAY
+usemtl wire_008061138
+s 1
+f 5/5/2 6/6/2 7/7/2 8/8/2 
+# 1 polygons
+
+#
+# object Mrf_Plane_Pavement_Set03_RED
+#
+
+v  650.0000 0.0000 250.0000
+v  1150.0000 0.0000 250.0000
+v  1150.0000 0.0000 -250.0000
+v  650.0000 0.0000 -250.0000
+# 4 vertices
+
+vn 0.0000 1.0000 -0.0000
+# 1 vertex normals
+
+vt -0.6364 -0.6364 0.5000
+vt 1.6364 -0.6364 0.5000
+vt 1.6364 1.6364 0.5000
+vt -0.6364 1.6364 0.5000
+# 4 texture coords
+
+g Mrf_Plane_Pavement_Set03_RED
+usemtl wire_008061138
+s 1
+f 9/9/3 10/10/3 11/11/3 12/12/3 
+# 1 polygons
+
+#
+# object Mrf_Plane_Pavement_Set03_LIGHT_BROWN
+#
+
+v  -550.0000 0.0000 250.0000
+v  -50.0000 0.0000 250.0000
+v  -50.0000 0.0000 -250.0000
+v  -550.0000 0.0000 -250.0000
+# 4 vertices
+
+vn 0.0000 1.0000 -0.0000
+# 1 vertex normals
+
+vt -0.6364 -0.6364 0.4999
+vt 1.6364 -0.6364 0.4999
+vt 1.6364 1.6364 0.4999
+vt -0.6364 1.6364 0.4999
+# 4 texture coords
+
+g Mrf_Plane_Pavement_Set03_LIGHT_BROWN
+usemtl wire_008061138
+s 1
+f 13/13/4 14/14/4 15/15/4 16/16/4 
+# 1 polygons
+

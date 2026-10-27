@@ -1,0 +1,46 @@
+# Blender 4.2.3 LTS MTL File: 'Indoor Plants.blend'
+# www.blender.org
+
+newmtl Leafe_dead
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.588235 0.588235 0.588235
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd Green jk1.jpg
+
+newmtl concret
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.578171 0.578171 0.578171
+Ks 0.464108 0.464108 0.464108
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd indoor plants_ColorFrame.png
+
+newmtl ground
+Ns 7.958707
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd Dirt jk11.jpg
+map_Ks Graunt__ambientocclusion.jpg
+map_Bump -bm 0.010000 Graunt__normal.jpg
+
+newmtl leafe_1
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.588235 0.588235 0.588235
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd Green jk3.jpg
