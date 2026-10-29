@@ -130,6 +130,17 @@ public:
 		return this->front;
 	}
 
+	// Coloca la camara en una posicion y la orienta hacia un objetivo.
+	void SetPositionAndLookAt(glm::vec3 cameraPosition,
+		glm::vec3 target)
+	{
+		position = cameraPosition;
+
+		front = glm::normalize(target - position);
+		right = glm::normalize(glm::cross(front, worldUp));
+		up = glm::normalize(glm::cross(right, front));
+	}
+
 private:
 	// Camera Attributes
 	glm::vec3 position;

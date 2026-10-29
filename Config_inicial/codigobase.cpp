@@ -105,13 +105,22 @@ float rotBall = 0.0f;
 bool AnimBall = false;
 bool AnimDog = false;
 float rotDog = 0.0f;
+
 int dogAnim = 0;
 float FLegs = 0.0f;
 float RLegs = 0.0f;
 float head = 0.0f;
 float tail = 0.0f;
+
+// Posicion y orientacion del perro
 glm::vec3 dogPos(0.0f, -1.5f, 0.0f);
+float dogYaw = 0.0f;
 float dogRot = 0.0f;
+
+// Camara de tercera persona
+float cameraDistance = 4.0f;
+float cameraHeight = 2.5f;
+
 bool step = false;
 
 // Deltatime
@@ -123,7 +132,7 @@ int main()
 	// Init GLFW
 	glfwInit();
 
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Previo 11 - Lilian De la Peña Osorio", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Zocalo", nullptr, nullptr);
 
 	if (nullptr == window)
 	{
@@ -137,7 +146,7 @@ int main()
 
 	// Set the required callback functions
 	glfwSetKeyCallback(window, KeyCallback);
-	glfwSetCursorPosCallback(window, MouseCallback);
+	//glfwSetCursorPosCallback(window, MouseCallback);
 
 	glewExperimental = GL_TRUE;
 	if (GLEW_OK != glewInit())
@@ -267,9 +276,6 @@ int main()
 
 		glEnable(GL_CULL_FACE);
 
-		// Frente plano de la cámara y orientación del perro guía
-		glm::vec3 flatFront = glm::normalize(glm::vec3(camera.GetFront().x, 0.0f, camera.GetFront().z));
-		dogRot = glm::degrees(atan2(flatFront.z, flatFront.x)) - 90.0f;
 
 		model = glm::mat4(1);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
@@ -363,49 +369,64 @@ int main()
 void DoMovement()
 {
 	bool moving = false;
-	glm::vec3 flatFront = glm::normalize(glm::vec3(camera.GetFront().x, 0.0f, camera.GetFront().z));
 
-	// 1. Movimiento de la posición con W, A, S, D
+	// Velocidades independientes del numero de cuadros
+	const float moveSpeed = 3.0f;
+	const float turnSpeed = 100.0f;
+
+	float dt = deltaTime;
+
+	// A y D giran al perro
+	if (keys[GLFW_KEY_A])
+		dogYaw += turnSpeed * dt;
+
+	if (keys[GLFW_KEY_D])
+		dogYaw -= turnSpeed * dt;
+
+	// Direccion hacia la que mira el perro.
+	// El modelo del perro tiene la cabeza hacia +Z.
+	float yawRad = glm::radians(dogYaw);
+
+	glm::vec3 forward(
+		sin(yawRad),
+		0.0f,
+		cos(yawRad)
+	);
+
+	// W avanza en la direccion del perro
 	if (keys[GLFW_KEY_W])
 	{
-		camera.ProcessKeyboard(FORWARD, deltaTime);
+		dogPos += forward * moveSpeed * dt;
 		moving = true;
 	}
+
+	// S retrocede
 	if (keys[GLFW_KEY_S])
 	{
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
-		moving = true;
-	}
-	if (keys[GLFW_KEY_A])
-	{
-		camera.ProcessKeyboard(LEFT, deltaTime);
-		moving = true;
-	}
-	if (keys[GLFW_KEY_D])
-	{
-		camera.ProcessKeyboard(RIGHT, deltaTime);
+		dogPos -= forward * moveSpeed * dt;
 		moving = true;
 	}
 
-	// 2. Giro de la perspectiva con las Flechas del teclado
-	if (keys[GLFW_KEY_LEFT])  camera.ProcessMouseMovement(-2.5f, 0.0f);
-	if (keys[GLFW_KEY_RIGHT]) camera.ProcessMouseMovement(2.5f, 0.0f);
-	if (keys[GLFW_KEY_UP])    camera.ProcessMouseMovement(0.0f, 2.5f);
-	if (keys[GLFW_KEY_DOWN])  camera.ProcessMouseMovement(0.0f, -2.5f);
+	// Orientacion usada al dibujar el modelo
+	dogRot = dogYaw;
 
-	// El perrito guía se posiciona automáticamente al frente de ti (a 2.5 unidades)
-	glm::vec3 cameraPos = camera.GetPosition();
-	dogPos = glm::vec3(cameraPos.x + flatFront.x * 2.5f, -1.5f, cameraPos.z + flatFront.z * 2.5f);
+	// Activar o detener la animacion de las patas
+	dogAnim = moving ? 1 : 0;
 
-	// Sincronizamos la animación de las patitas
-	if (moving)
-	{
-		dogAnim = 1;
-	}
-	else
-	{
-		dogAnim = 0;
-	}
+	// Mantener el perro a la altura definida
+	dogPos.y = -1.5f;
+
+	// Posicion de la camara: atras y arriba del perro
+	glm::vec3 cameraPos =
+		dogPos
+		- forward * cameraDistance
+		+ glm::vec3(0.0f, cameraHeight, 0.0f);
+
+	// Punto al que mira la camara
+	glm::vec3 lookTarget =
+		dogPos + glm::vec3(0.0f, 0.35f, 0.0f);
+
+	camera.SetPositionAndLookAt(cameraPos, lookTarget);
 
 	// Controles de luz opcionales
 	if (keys[GLFW_KEY_T]) pointLightPositions[0].x += 0.01f;
