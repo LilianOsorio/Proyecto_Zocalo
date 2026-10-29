@@ -1,7 +1,4 @@
-// Practica 10
-// Alumna: Lilian De la Peña Osorio
-// No. Cuenta: 423069439
-// Fecha: 21/10/2026
+// Proeyecto Zocalo
 
 
 #include <iostream>
