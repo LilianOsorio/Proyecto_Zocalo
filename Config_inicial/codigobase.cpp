@@ -38,7 +38,7 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 int SCREEN_WIDTH, SCREEN_HEIGHT;
 
 // Camera
-Camera  camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera  camera(glm::vec3(1.0f, -0.8f, 7.0f));
 GLfloat lastX = WIDTH / 2.0;
 GLfloat lastY = HEIGHT / 2.0;
 bool keys[1024];
@@ -119,7 +119,7 @@ float dogRot = 0.0f;
 
 // Camara de tercera persona
 float cameraDistance = 4.0f;
-float cameraHeight = 2.5f;
+float cameraHeight = 1.0f;
 
 bool step = false;
 
@@ -171,6 +171,10 @@ int main()
 	Model Piso((char*)"Models/piso/Mrf+Pavement+Set03.obj");
 	Model Ball((char*)"Models/ball.obj");
 
+	Model Puesto((char*)"Models/puesto/asian food vendor.obj");
+	Model Lampara((char*)"Models/lampara/Street_lamp_1.obj");
+
+
 	GLuint VBO, VAO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -187,7 +191,7 @@ int main()
 	glUniform1i(glGetUniformLocation(lightingShader.Program, "Material.difuse"), 0);
 	glUniform1i(glGetUniformLocation(lightingShader.Program, "Material.specular"), 1);
 
-	glm::mat4 projection = glm::perspective(camera.GetZoom(), (GLfloat)SCREEN_WIDTH / (GLfloat)SCREEN_HEIGHT, 0.1f, 100.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(60.0f), (GLfloat)SCREEN_WIDTH / (GLfloat)SCREEN_HEIGHT, 0.1f, 100.0f);
 
 	// Game loop
 	while (!glfwWindowShouldClose(window))
@@ -200,7 +204,7 @@ int main()
 		DoMovement();
 		Animation();
 
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClearColor(0.05f, 0.05f, 0.15f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glEnable(GL_DEPTH_TEST);
@@ -264,8 +268,8 @@ int main()
 		glDisable(GL_CULL_FACE);
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 0);
 
-		for (int i = -4; i <= 4; i++) {
-			for (int j = -4; j <= 4; j++) {
+		for (int i = -10; i <= 10; i++) {
+			for (int j = -10; j <= 10; j++) {
 				model = glm::mat4(1);
 				model = glm::translate(model, glm::vec3(i * 1.0f, -2.0f, j * 1.0f));
 				model = glm::scale(model, glm::vec3(0.002f, 0.002f, 0.002f));
@@ -282,7 +286,8 @@ int main()
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 0);
 
 		// Body
-		modelTemp = model = glm::translate(glm::mat4(1.0f), dogPos);
+		glm::vec3 dogPosElevado = dogPos + glm::vec3(0.0f, 0.05f, 0.0f);
+		modelTemp = model = glm::translate(glm::mat4(1.0f), dogPosElevado);
 		modelTemp = model = glm::rotate(model, glm::radians(dogRot), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		DogBody.Draw(lightingShader);
@@ -340,6 +345,23 @@ int main()
 		Ball.Draw(lightingShader);
 		glDisable(GL_BLEND);
 		glBindVertexArray(0);
+
+		// Puesto
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(3.0f, -1.5f, 0.0f)); // Modifica estas coordenadas X, Y, Z si quieres moverlo de lugar
+		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));     // Ajusta la escala si se ve muy grande o muy chico
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 0);
+		Puesto.Draw(lightingShader);
+
+		// Lampara
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(-2.0f, -2.0f, 0.0f)); // Coordenadas en la explanada
+		model = glm::scale(model, glm::vec3(2.5f, 2.5f, 2.5f));		
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 0);
+		Lampara.Draw(lightingShader);
+
 
 		// Lamp object
 		lampShader.Use();
