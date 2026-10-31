@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <cmath>
+#include <vector>
+#include <string>
 
 // GLEW
 #include <GL/glew.h>
@@ -35,7 +37,13 @@ void MouseCallback(GLFWwindow* window, double xPos, double yPos);
 void DoMovement();
 void Animation();
 
-
+void DrawSidewalk(
+	Shader shader,
+	GLuint VAO,
+	glm::vec3 position,
+	glm::vec3 size,
+	glm::vec3 color
+);
 
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -506,6 +514,75 @@ int main()
 			}
 		}
 
+		// Calle continuacion piso
+
+		for (int i = -4; i <= 4; i++)
+		{
+			for (int j = -40; j <= -16; j++)
+			{
+				model = glm::mat4(1.0f);
+
+				model = glm::translate(
+					model,
+					glm::vec3(i * 1.0f, -2.0f, j * 1.0f)
+				);
+
+				model = glm::scale(
+					model,
+					glm::vec3(0.002f, 0.002f, 0.002f)
+				);
+
+				glUniformMatrix4fv(
+					modelLoc,
+					1,
+					GL_FALSE,
+					glm::value_ptr(model)
+				);
+
+				Piso.Draw(lightingShader);
+			}
+		}
+
+		// BANUQETAS
+
+		lampShader.Use();
+
+		// Configurar la cámara para el shader de las banquetas
+		GLint sidewalkViewLoc =
+			glGetUniformLocation(lampShader.Program, "view");
+
+		GLint sidewalkProjLoc =
+			glGetUniformLocation(lampShader.Program, "projection");
+
+		glUniformMatrix4fv(
+			sidewalkViewLoc, 1, GL_FALSE, glm::value_ptr(view)
+		);
+
+		glUniformMatrix4fv(
+			sidewalkProjLoc, 1, GL_FALSE, glm::value_ptr(projection)
+		);
+
+		// Banqueta izquierda
+		DrawSidewalk(
+			lampShader,
+			VAO,
+			glm::vec3(-5.0f, -1.85f, -28.0f),
+			glm::vec3(2.0f, 0.30f, 24.0f),
+			glm::vec3(0.5f, 0.5f, 0.5f)
+		);
+
+		// Banqueta derecha
+		DrawSidewalk(
+			lampShader,
+			VAO,
+			glm::vec3(5.0f, -1.85f, -28.0f),
+			glm::vec3(2.0f, 0.30f, 24.0f),
+			glm::vec3(0.5f, 0.5f, 0.5f)
+		);
+
+		lightingShader.Use();
+
+
 		glEnable(GL_CULL_FACE);
 
 		glUniform1i(
@@ -518,12 +595,22 @@ int main()
 		float centroY = 4.0f;
 		float anchoMuro = 32.0f;
 
-		// MURO NORTE
+		// MURO NORTE - LADO IZQUIERDO
 		DrawWall(
 			lightingShader,
 			texNorte,
-			glm::vec3(0.0f, centroY, -16.0f),
-			anchoMuro,
+			glm::vec3(-10.0f, centroY, -16.0f),
+			12.0f,
+			alturaMuro,
+			0.0f
+		);
+
+		// MURO NORTE - LADO DERECHO
+		DrawWall(
+			lightingShader,
+			texNorte,
+			glm::vec3(10.0f, centroY, -16.0f),
+			12.0f,
 			alturaMuro,
 			0.0f
 		);
@@ -556,6 +643,36 @@ int main()
 			anchoMuro,
 			alturaMuro,
 			90.0f
+		);
+
+		// Fachada del izquierda
+		DrawWall(
+			lightingShader,
+			texEste,
+			glm::vec3(-7.5f, centroY, -28.0f),
+			24.0f,
+			alturaMuro,
+			90.0f
+		);
+
+		// Fachada derecha
+		DrawWall(
+			lightingShader,
+			texSur,
+			glm::vec3(7.5f, centroY, -28.0f),
+			24.0f,
+			alturaMuro,
+			-90.0f
+		);
+
+		// Edificio del fondo
+		DrawWall(
+			lightingShader,
+			texNorte,
+			glm::vec3(0.0f, centroY, -40.0f),
+			15.0f,
+			alturaMuro,
+			0.0f
 		);
 
 		// Volver a activar el descarte de caras
@@ -735,6 +852,38 @@ int main()
 	return 0;
 }
 
+// Dibujar una banqueta con un cubo
+void DrawSidewalk(
+	Shader shader,
+	GLuint VAO,
+	glm::vec3 position,
+	glm::vec3 size,
+	glm::vec3 color
+)
+{
+	glm::mat4 model = glm::mat4(1.0f);
+
+	model = glm::translate(model, position);
+	model = glm::scale(model, size);
+
+	glUniformMatrix4fv(
+		glGetUniformLocation(shader.Program, "model"),
+		1,
+		GL_FALSE,
+		glm::value_ptr(model)
+	);
+
+	glUniform3f(
+		glGetUniformLocation(shader.Program, "objectColor"),
+		color.r,
+		color.g,
+		color.b
+	);
+
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+}
 
 void DoMovement()
 {
@@ -783,12 +932,20 @@ void DoMovement()
 	// Activar o detener la animacion de las patas
 	dogAnim = moving ? 1 : 0;
 
+	// Limites laterales de la plaza
 	float limiteX = 15.0f;
-	float limiteZ = 15.0f;
 
-	// Evitar que el perro atraviese los muros
+	// Permitir salir por la abertura norte
 	dogPos.x = glm::clamp(dogPos.x, -limiteX, limiteX);
-	dogPos.z = glm::clamp(dogPos.z, -limiteZ, limiteZ);
+
+	if (dogPos.x >= -4.0f && dogPos.x <= 4.0f)
+	{
+		dogPos.z = glm::clamp(dogPos.z, -40.0f, 15.0f);
+	}
+	else
+	{
+		dogPos.z = glm::clamp(dogPos.z, -15.0f, 15.0f);
+	}
 
 	// Mantener el perro a la altura definida
 	dogPos.y = -1.5f;
