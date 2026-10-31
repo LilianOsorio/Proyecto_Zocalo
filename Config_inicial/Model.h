@@ -71,6 +71,8 @@ private:
 
 		// Process ASSIMP's root node recursively
 		this->processNode(scene->mRootNode, scene);
+		//cout << "Modelo cargado: " << path << endl;
+		//cout << "Cantidad de mallas: " << scene->mNumMeshes << endl;
 	}
 
 	// Processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).

@@ -22,8 +22,15 @@ public:
 		std::ifstream vShaderFile;
 		std::ifstream fShaderFile;
 		// ensures ifstream objects can throw exceptions:
-		vShaderFile.exceptions(std::ifstream::badbit);
-		fShaderFile.exceptions(std::ifstream::badbit);
+		
+		vShaderFile.exceptions(
+			std::ifstream::failbit | std::ifstream::badbit
+		);
+
+		fShaderFile.exceptions(
+			std::ifstream::failbit | std::ifstream::badbit
+		);
+
 		try
 		{
 			// Open files
@@ -40,10 +47,18 @@ public:
 			vertexCode = vShaderStream.str();
 			fragmentCode = fShaderStream.str();
 		}
-		catch (std::ifstream::failure e)
+		
+		catch (const std::ifstream::failure& e)
 		{
-			std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+			std::cout << "ERROR: No se pudieron leer los archivos del shader."
+				<< std::endl;
+
+			std::cout << e.what() << std::endl;
+
+			std::cout << "Vertex shader: " << vertexPath << std::endl;
+			std::cout << "Fragment shader: " << fragmentPath << std::endl;
 		}
+
 		const GLchar *vShaderCode = vertexCode.c_str();
 		const GLchar *fShaderCode = fragmentCode.c_str();
 		// 2. Compile shaders

@@ -50,13 +50,13 @@ public:
 	/*  Functions  */
 	// Constructor
 	Mesh(vector<Vertex> vertices, vector<GLuint> indices,
-	vector<Texture> textures, glm::vec3 diffuseColor)
+		vector<Texture> textures, glm::vec3 diffuseColor)
 	{
 		this->vertices = vertices;
 		this->indices = indices;
 		this->textures = textures;
+		this->diffuseColor = diffuseColor;  // ESTA ES LA LÍNEA NUEVA
 
-		// Now that we have all the required data, set the vertex buffers and its attribute pointers.
 		this->setupMesh();
 	}
 
@@ -75,29 +75,22 @@ void Draw(Shader shader)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);
 
-		stringstream ss;
-		string number;
-		string name = this->textures[i].type;
-
-		if (name == "texture_diffuse")
+		if (this->textures[i].type == "texture_diffuse")
 		{
-			ss << diffuseNr++;
+			glUniform1i(
+				glGetUniformLocation(shader.Program, "material.diffuse"),
+				i
+			);
+
 			hasDiffuseTexture = true;
 		}
-		else if (name == "texture_specular")
+		else if (this->textures[i].type == "texture_specular")
 		{
-			ss << specularNr++;
+			glUniform1i(
+				glGetUniformLocation(shader.Program, "material.specular"),
+				i
+			);
 		}
-
-		number = ss.str();
-
-		glUniform1i(
-			glGetUniformLocation(
-				shader.Program,
-				(name + number).c_str()
-			),
-			i
-		);
 
 		glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
 	}
